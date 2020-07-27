@@ -38,6 +38,15 @@ impl Board {
         Ok(board)
     }
 
+    pub fn width(&self) -> i32 { self.width }
+
+    pub fn height(&self) -> i32 { self.height }
+
+    pub fn location_at(&self, x: i32, y: i32) -> &Location {
+        let index = self.index_for_point(&Point { x, y }).unwrap();
+        &self.locations[index]
+    }
+
     // Private Functions
 
     fn init_locations(&mut self) {

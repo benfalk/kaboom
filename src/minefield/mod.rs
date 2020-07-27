@@ -1,3 +1,3 @@
-mod point;
-mod location;
+pub mod point;
+pub mod location;
 pub mod board;

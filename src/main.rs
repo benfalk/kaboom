@@ -1,4 +1,5 @@
 mod minefield;
+mod gui;
 use clap::Clap;
 
 #[derive(Clap)]
@@ -16,14 +17,5 @@ struct Opts {
 
 fn main() {
     let opts: Opts = Opts::parse();
-
-    match minefield::board::Board::new(opts.width, opts.height, opts.count) {
-        Ok(board) =>
-            println!("{}", board),
-
-        Err(reason) => {
-            eprintln!("{}", reason);
-            std::process::exit(1)
-        }
-    };
+    gui::run(opts.width, opts.height, opts.count);
 }
