@@ -47,6 +47,11 @@ impl Board {
         &self.locations[index]
     }
 
+    pub fn location_at_mut(&mut self, x: i32, y: i32) -> &mut Location {
+        let index = self.index_for_point(&Point { x, y }).unwrap();
+        self.locations.get_mut(index).unwrap()
+    }
+
     // Private Functions
 
     fn init_locations(&mut self) {

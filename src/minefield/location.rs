@@ -5,6 +5,14 @@ pub struct Location {
     pub point: Point,
     pub has_bomb: bool,
     pub surrounding_bomb_count: u8,
+    pub status: Status,
+}
+
+#[derive(Debug)]
+pub enum Status {
+    Covered,
+    Flagged,
+    Uncovered,
 }
 
 impl Location {
@@ -13,6 +21,7 @@ impl Location {
             point,
             has_bomb: false,
             surrounding_bomb_count: 0,
+            status: Status::Covered,
         }
     }
 }
