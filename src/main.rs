@@ -1,6 +1,8 @@
 mod minefield;
 mod gui;
+
 use clap::Clap;
+use minefield::board::Board;
 
 #[derive(Clap)]
 #[clap(version = "0.1.0", author = "Benjamin Falk <benjamin.falk@yahoo.com>")]
@@ -17,5 +19,6 @@ struct Opts {
 
 fn main() {
     let opts: Opts = Opts::parse();
-    gui::run(opts.width, opts.height, opts.count);
+    let board = Board::new(opts.width, opts.height, opts.count).unwrap();
+    gui::run(board).unwrap();
 }
