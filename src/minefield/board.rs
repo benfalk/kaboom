@@ -1,4 +1,7 @@
-use super::location::Location;
+use super::location::{
+    Location,
+    Status::*,
+};
 use super::point::Point;
 use rand::seq::IteratorRandom;
 
@@ -47,9 +50,38 @@ impl Board {
         &self.locations[index]
     }
 
-    pub fn location_at_mut(&mut self, x: i32, y: i32) -> &mut Location {
+    pub fn uncover_location_at(&mut self, x: i32, y: i32) {
         let index = self.index_for_point(&Point { x, y }).unwrap();
-        self.locations.get_mut(index).unwrap()
+
+        match self.locations.get_mut(index).unwrap() {
+
+            Location { status, .. }
+            if status == &Uncovered || status == &Flagged =>
+                return,
+
+            location => {
+                location.status = Uncovered;
+
+                if location.surrounding_bomb_count == 0 {
+                    for point in location.point.surrounding_points().iter() {
+                        if self.index_for_point(&point).is_some() {
+                            self.uncover_location_at(point.x, point.y);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn toggle_flag(&mut self, x: i32, y: i32) {
+        let index = self.index_for_point(&Point { x, y }).unwrap();
+        let mut loc = self.locations.get_mut(index).unwrap();
+
+        match loc {
+            Location { status: Covered, .. } => loc.status = Flagged,
+            Location { status: Flagged, .. } => loc.status = Covered,
+            _ => (),
+        }
     }
 
     // Private Functions

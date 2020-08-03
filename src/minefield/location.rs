@@ -8,7 +8,7 @@ pub struct Location {
     pub status: Status,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Status {
     Covered,
     Flagged,
