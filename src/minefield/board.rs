@@ -11,6 +11,8 @@ pub struct Board {
     width: i32,
     height: i32,
     bomb_count: i32,
+    tiles_remaining: usize,
+    tiles_flagged: usize,
 }
 
 impl Board {
@@ -33,12 +35,25 @@ impl Board {
             width,
             height,
             bomb_count,
+            tiles_remaining: (width * height) as usize,
+            tiles_flagged: 0,
         };
 
         board.init_locations();
         board.seed_bombs();
 
         Ok(board)
+    }
+
+    pub fn reset(&mut self) {
+        for mut loc in self.locations.iter_mut() {
+            loc.surrounding_bomb_count = 0;
+            loc.status = Covered;
+            loc.has_bomb = false;
+        }
+        self.seed_bombs();
+        self.tiles_remaining = self.locations.len();
+        self.tiles_flagged = 0;
     }
 
     pub fn width(&self) -> i32 { self.width }
@@ -61,6 +76,7 @@ impl Board {
 
             location => {
                 location.status = Uncovered;
+                self.tiles_remaining -= 1;
 
                 if location.surrounding_bomb_count == 0 {
                     for point in location.point.surrounding_points().iter() {
@@ -78,8 +94,14 @@ impl Board {
         let mut loc = self.locations.get_mut(index).unwrap();
 
         match loc {
-            Location { status: Covered, .. } => loc.status = Flagged,
-            Location { status: Flagged, .. } => loc.status = Covered,
+            Location { status: Covered, .. } => {
+                loc.status = Flagged;
+                self.tiles_flagged += 1;
+            },
+            Location { status: Flagged, .. } => {
+                loc.status = Covered;
+                self.tiles_flagged -= 1;
+            },
             _ => (),
         }
     }

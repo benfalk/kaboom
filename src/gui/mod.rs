@@ -2,6 +2,7 @@ mod state;
 mod assets;
 mod minefield;
 mod component;
+mod reset_button;
 
 use tetra::ContextBuilder;
 use super::minefield::board::Board;

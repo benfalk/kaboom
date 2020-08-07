@@ -13,7 +13,7 @@ struct Opts {
     #[clap(short, long, default_value = "25")]
     height: i32,
 
-    #[clap(short, long, default_value = "15")]
+    #[clap(short, long, default_value = "99")]
     count: i32,
 }
 
