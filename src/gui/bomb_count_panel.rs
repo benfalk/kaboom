@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::fmt::Write;
 
 use super::assets::Assets;
 use super::component::Component;
@@ -16,6 +17,7 @@ pub struct BombCountPanel {
     board: Rc<RefCell<Board>>,
     background: Texture,
     count: RefCell<Text>,
+    buffer: RefCell<String>,
 }
 
 impl BombCountPanel {
@@ -26,9 +28,10 @@ impl BombCountPanel {
             board,
             background: Assets::get_texture(ctx, "40-by-80.png"),
             count: RefCell::new(Text::new(
-                "hey",
+                "",
                 Assets::get_font(ctx, "DejaVuSansMono.ttf", 20.)
-            ))
+            )),
+            buffer: RefCell::new(String::with_capacity(20)),
         }
     }
 }
@@ -47,6 +50,7 @@ impl Component for BombCountPanel {
 }
 
 impl Drawable for BombCountPanel {
+
     fn draw<P: Into<DrawParams>>(&self, ctx: &mut Context, params: P) {
         let params: DrawParams = params.into();
         graphics::draw(ctx, &self.background, params.position);
@@ -55,8 +59,13 @@ impl Drawable for BombCountPanel {
             .position(params.position + (20., 10.))
             .color(Color::BLACK);
 
-        let remaining = self.board.borrow().bombs_remaining().to_string();
-        self.count.borrow_mut().set_content(remaining);
+        // The cost of not allocating a string?
+        let remaining = self.board.borrow().bombs_remaining();
+        let mut buffer = self.buffer.borrow_mut();
+        buffer.truncate(0);
+        write!(&mut *buffer, "{}", remaining).unwrap();
+
+        self.count.borrow_mut().set_content(&(*buffer));
 
         graphics::draw(ctx, &(*self.count.borrow()), text_parms);
     }
