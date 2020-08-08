@@ -25,6 +25,7 @@ use tetra::input::MouseButton;
 pub struct Minefield {
     board: Rc<RefCell<Board>>,
     covered_square: Texture,
+    mine_square: Texture,
     flag_square: Texture,
     width: f32,
     height: f32,
@@ -44,6 +45,7 @@ impl Minefield {
             width,
             height,
             covered_square: Assets::get_texture(ctx, "element_grey_square.png"),
+            mine_square: Assets::get_texture(ctx, "mine.png"),
             flag_square: Assets::get_texture(ctx, "flag.png"),
             uncovered_texts: [
                 Assets::get_texture(ctx, "blank_square.png"),
@@ -98,6 +100,9 @@ impl Drawable for Minefield {
 
                     Location { status: Covered, .. } =>
                         graphics::draw(ctx, &self.covered_square, vec2),
+
+                    Location { status: Uncovered, has_bomb: true, .. } =>
+                        graphics::draw(ctx, &self.mine_square, vec2),
 
                     Location { status: Uncovered, surrounding_bomb_count: count, .. } => {
                         graphics::draw(ctx, &self.uncovered_texts[*count as usize], vec2);
