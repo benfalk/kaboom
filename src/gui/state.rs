@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use super::minefield::Minefield;
 use super::reset_button::ResetButton;
+use super::bomb_count_panel::BombCountPanel;
 use super::super::minefield::board::Board;
 use super::component::Component;
 
@@ -12,10 +13,12 @@ use tetra::{Context, State};
 use tetra::math::Vec2;
 
 pub struct GameState {
-    minefield: Minefield,
     reset_button: ResetButton,
     reset_button_origin: Vec2<f32>,
+    minefield: Minefield,
     minefield_origin: Vec2<f32>,
+    bomb_count_panel: BombCountPanel,
+    bomb_count_panel_origin: Vec2<f32>,
     background_color: Color,
 }
 
@@ -26,6 +29,10 @@ impl GameState {
         Self {
             reset_button: ResetButton::new(ctx, Rc::clone(&board)),
             reset_button_origin: Vec2::new(0., 0.),
+
+            bomb_count_panel: BombCountPanel::new(ctx, Rc::clone(&board)),
+            bomb_count_panel_origin: Vec2::new(85., 0.),
+
             minefield: Minefield::new(ctx, board),
             minefield_origin: Vec2::new(0., 40.),
             background_color: Color::hex("#92969c"),
@@ -38,6 +45,7 @@ impl State for GameState {
         graphics::clear(ctx, self.background_color);
         graphics::draw(ctx, &self.minefield, self.minefield_origin);
         graphics::draw(ctx, &self.reset_button, self.reset_button_origin);
+        graphics::draw(ctx, &self.bomb_count_panel, self.bomb_count_panel_origin);
         Ok(())
     }
 

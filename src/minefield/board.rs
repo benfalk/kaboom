@@ -56,6 +56,10 @@ impl Board {
         self.tiles_flagged = 0;
     }
 
+    pub fn bombs_remaining(&self) -> i32 {
+        self.bomb_count - self.tiles_flagged as i32
+    }
+
     pub fn width(&self) -> i32 { self.width }
 
     pub fn height(&self) -> i32 { self.height }

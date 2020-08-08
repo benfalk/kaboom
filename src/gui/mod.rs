@@ -3,6 +3,7 @@ mod assets;
 mod minefield;
 mod component;
 mod reset_button;
+mod bomb_count_panel;
 
 use tetra::ContextBuilder;
 use super::minefield::board::Board;

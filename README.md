@@ -7,8 +7,18 @@ wet with a "complete" project in Rust that I can hang my hat on.  I
 normally write minesweeper clones in other languages when I want to
 "kick the tires" and get a good feel.
 
+<img src="./media/demo-app.png" />
+
 ### Building for Ubuntu
 
 ```bash
-sudo apt install libx11-dev libfreetype-dev
+sudo apt install libsdl2-dev
+sudo apt install libasound2-dev
+cargo build --release
+```
+### OSX
+
+```bash
+brew install sdl2
+cargo build --release
 ```
