@@ -3,6 +3,7 @@ use super::location::{
     Status::*,
 };
 use super::point::Point;
+use super::state::State;
 use rand::seq::IteratorRandom;
 
 #[derive(Debug)]
@@ -13,6 +14,7 @@ pub struct Board {
     bomb_count: i32,
     tiles_remaining: usize,
     tiles_flagged: usize,
+    state: State,
 }
 
 impl Board {
@@ -37,6 +39,7 @@ impl Board {
             bomb_count,
             tiles_remaining: (width * height) as usize,
             tiles_flagged: 0,
+            state: State::default(),
         };
 
         board.init_locations();
@@ -54,10 +57,15 @@ impl Board {
         self.seed_bombs();
         self.tiles_remaining = self.locations.len();
         self.tiles_flagged = 0;
+        self.state = State::default();
     }
 
     pub fn bombs_remaining(&self) -> i32 {
         self.bomb_count - self.tiles_flagged as i32
+    }
+
+    pub fn state(&self) -> State {
+        self.state
     }
 
     pub fn width(&self) -> i32 { self.width }
@@ -72,6 +80,10 @@ impl Board {
     pub fn uncover_location_at(&mut self, x: i32, y: i32) {
         let index = self.index_for_point(&Point { x, y }).unwrap();
 
+        if self.state.is_ready() {
+            self.state = State::start();
+        }
+
         match self.locations.get_mut(index).unwrap() {
 
             Location { status, .. }
@@ -82,7 +94,9 @@ impl Board {
                 location.status = Uncovered;
                 self.tiles_remaining -= 1;
 
-                if location.surrounding_bomb_count == 0 {
+                if location.has_bomb {
+                    self.state = self.state.to_failure();
+                } else if location.surrounding_bomb_count == 0 {
                     for point in location.point.surrounding_points().iter() {
                         if self.index_for_point(&point).is_some() {
                             self.uncover_location_at(point.x, point.y);
@@ -90,6 +104,10 @@ impl Board {
                     }
                 }
             }
+        }
+
+        if self.tiles_remaining == self.bomb_count as usize {
+            self.state = self.state.to_victory();
         }
     }
 

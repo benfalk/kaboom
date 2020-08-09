@@ -4,6 +4,7 @@ use std::rc::Rc;
 use super::minefield::Minefield;
 use super::reset_button::ResetButton;
 use super::bomb_count_panel::BombCountPanel;
+use super::seconds_running::SecondsRunning;
 use super::super::minefield::board::Board;
 use super::component::Component;
 
@@ -19,6 +20,8 @@ pub struct GameState {
     minefield_origin: Vec2<f32>,
     bomb_count_panel: BombCountPanel,
     bomb_count_panel_origin: Vec2<f32>,
+    seconds_running_panel: SecondsRunning,
+    seconds_running_panel_origin: Vec2<f32>,
     background_color: Color,
 }
 
@@ -33,6 +36,9 @@ impl GameState {
             bomb_count_panel: BombCountPanel::new(ctx, Rc::clone(&board)),
             bomb_count_panel_origin: Vec2::new(85., 0.),
 
+            seconds_running_panel: SecondsRunning::new(ctx, Rc::clone(&board)),
+            seconds_running_panel_origin: Vec2::new(170., 0.),
+
             minefield: Minefield::new(ctx, board),
             minefield_origin: Vec2::new(0., 40.),
             background_color: Color::hex("#92969c"),
@@ -46,6 +52,7 @@ impl State for GameState {
         graphics::draw(ctx, &self.minefield, self.minefield_origin);
         graphics::draw(ctx, &self.reset_button, self.reset_button_origin);
         graphics::draw(ctx, &self.bomb_count_panel, self.bomb_count_panel_origin);
+        graphics::draw(ctx, &self.seconds_running_panel, self.seconds_running_panel_origin);
         Ok(())
     }
 
